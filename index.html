@@ -56,6 +56,25 @@
     width: 100%;
     max-width: 560px;
     perspective: 2400px;
+    opacity: 0;
+    transform: translateY(18px);
+    animation: stageIn 1.1s cubic-bezier(.22,.7,.2,1) forwards;
+    animation-delay: 0.15s;
+  }
+
+  @keyframes stageIn {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .stage {
+      opacity: 1;
+      transform: none;
+      animation: none;
+    }
   }
 
   .page-stack {
@@ -169,6 +188,16 @@
     height: 120px;
     margin: 0 auto;
     cursor: pointer;
+    transition: transform 0.15s ease;
+  }
+
+  .seal-cluster:active {
+    transform: scale(0.94);
+  }
+
+  .stamp-rig.stamping .seal-cluster,
+  .stamp-rig.stamped .seal-cluster {
+    transform: none;
   }
 
   /* --------------------------------
@@ -196,6 +225,29 @@
     filter: drop-shadow(0 8px 12px rgba(0,0,0,0.65)) drop-shadow(0 2px 4px rgba(0,0,0,0.4));
     transition: transform 0.2s ease, opacity 0.2s ease; 
     z-index: 2;
+    animation: sealBreathe 3.2s ease-in-out infinite;
+  }
+
+  @keyframes sealBreathe {
+    0%, 100% {
+      filter: drop-shadow(0 8px 12px rgba(0,0,0,0.65)) drop-shadow(0 2px 4px rgba(0,0,0,0.4)) drop-shadow(0 0 2px rgba(210,80,95,0.25));
+      transform: translateX(-50%) scale(0.72, 0.78);
+    }
+    50% {
+      filter: drop-shadow(0 8px 12px rgba(0,0,0,0.65)) drop-shadow(0 2px 4px rgba(0,0,0,0.4)) drop-shadow(0 0 18px rgba(210,80,95,0.95)) drop-shadow(0 0 30px rgba(156,49,64,0.5));
+      transform: translateX(-50%) scale(0.735, 0.795);
+    }
+  }
+
+  .stamp-rig.stamping .seal-core,
+  .stamp-rig.stamped .seal-core {
+    animation: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .seal-core {
+      animation: none;
+    }
   }
 
   .seal-core::before {
@@ -426,19 +478,16 @@
     -webkit-text-fill-color: transparent;
     -webkit-text-stroke: 0.9px #2e070c;
 
-    filter:
-      drop-shadow(0 1px 0 rgba(0,0,0,0.6))
-      drop-shadow(0 -1px 0 rgba(80,10,15,0.3));
+    transition:
+      opacity 0.4s ease,
+      filter 0.5s ease,
+      transform 0.25s ease;
 
     letter-spacing: -14px;
     display: block;
     text-align: center;
     user-select: none;
     opacity: 0;
-
-    transition:
-      opacity 0.25s ease,
-      transform 0.25s ease;
 
     z-index: 4;
   }
@@ -450,6 +499,54 @@
       translateX(-9px)
       translateY(6px)
       scale(1, 1.75);
+  }
+
+  /* --------------------------------
+     MONOGRAM FLASH (hot red, cools into the dark stamp color)
+     -------------------------------- */
+
+  .monogram-flash {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform:
+      translate(-50%, -50%)
+      translateX(-9px)
+      translateY(6px)
+      scale(1, 1.75);
+
+    width: max-content;
+    margin: 0;
+    padding: 0;
+
+    font-family: 'Great Vibes', 'Tangerine', cursive;
+    font-size: 32px;
+    line-height: 1;
+    letter-spacing: -14px;
+    text-align: center;
+    display: block;
+    user-select: none;
+    pointer-events: none;
+
+    color: #ff5c4d;
+    text-shadow:
+      0 0 8px rgba(255,92,77,0.9),
+      0 0 18px rgba(255,60,50,0.55);
+
+    opacity: 0;
+    z-index: 5;
+  }
+
+  .stamp-rig.stamping .monogram-flash {
+    animation: monogramFlashOut 2s cubic-bezier(.22,.7,.2,1) forwards;
+  }
+
+  @keyframes monogramFlashOut {
+    0% { opacity: 0; }
+    20% { opacity: 0.9; }
+    50% { opacity: 0.5; }
+    80% { opacity: 0.15; }
+    100% { opacity: 0; }
   }
 
   /* --------------------------------
@@ -471,16 +568,25 @@
   @keyframes imprintMonogram {
     0% {
       opacity: 0;
-      filter: brightness(1.8) saturate(1.4) drop-shadow(0 0 3px rgba(156,49,64,0.7));
+      filter: drop-shadow(0 0 8px rgba(255, 92, 77, 0.8));
       transform:
         translate(-50%, -50%)
         translateX(-9px)
         translateY(6px)
         scale(1, 1.75);
     }
-    15% {
+    25% {
+      opacity: 0.35;
+      filter: drop-shadow(0 0 6px rgba(255, 92, 77, 0.6));
+      transform:
+        translate(-50%, -50%)
+        translateX(-9px)
+        translateY(6px)
+        scale(1, 1.75);
+    }
+    60% {
       opacity: 0.75;
-      filter: brightness(1.5) saturate(1.2) drop-shadow(0 0 2px rgba(156,49,64,0.4));
+      filter: drop-shadow(0 0 3px rgba(180, 50, 60, 0.35));
       transform:
         translate(-50%, -50%)
         translateX(-9px)
@@ -489,7 +595,9 @@
     }
     100% {
       opacity: 1;
-      filter: brightness(1) saturate(1) drop-shadow(0 -1px 0 rgba(0,0,0,0.6)) drop-shadow(0 1px 0 rgba(80,10,15,0.2));
+      filter:
+        drop-shadow(0 -1px 0 rgba(0,0,0,0.6))
+        drop-shadow(0 1px 0 rgba(80,10,15,0.2));
       transform:
         translate(-50%, -50%)
         translateX(-9px)
@@ -789,6 +897,7 @@
             </div>
             <div class="seal-inner">
               <span class="monogram">DH</span>
+              <span class="monogram-flash" aria-hidden="true">DH</span>
             </div>
           </div>
           <div class="seal-drip"></div>
